@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Policy Analyzer · DataRefuse{% endblock %}
+{% block content %}
+<section class="page-head">
+  <p class="eyebrow">POLICY & CONSENT REVIEW</p>
+  <h1>Check what an app says about your concern</h1>
+  <p>Select an app and type the issue in your own words. DataRefuse searches the retrieved policy for related language, highlights relevant passages and explains them simply.</p>
+</section>
+<form method="post" class="analyzer-form">
+  <div class="panel">
+    <label for="app">1. Select an app</label>
+    <select id="app" name="app" required>
+      <option value="">Choose an app</option>
+      {% for a in apps %}<option value="{{a.name}}" {% if app_name==a.name %}selected{% endif %}>{{a.name}} — {{a.category}}</option>{% endfor %}
+    </select>
+    <label for="query">2. What do you want to check?</label>
+    <input id="query" name="query" type="text" value="{{query}}" placeholder="e.g. location tracking, GPS, targeted ads, sharing data with partners..." required>
+    <p class="muted small">Use everyday language. You do not need to know the legal wording. DataRefuse expands your query into related terms such as GPS, geolocation, device location and coordinates.</p>
+    <button class="btn" type="submit" name="action" value="analyse">Find and explain relevant policy passages →</button>
+    {% if source_url %}
+      <div class="source-chip"><strong>Policy source retrieved:</strong> <a href="{{source_url}}" target="_blank" rel="noopener">{{source_url}}</a><small>{{source_kind}}{% if fetched_at %} · Retrieved {{fetched_at}}{% endif %}</small></div>
+    {% endif %}
+    {% if hits %}
+      <details class="policy-details">
+        <summary>View retrieved policy text</summary>
+        <textarea name="policy_text" rows="10" readonly>{{policy_text}}</textarea>
+      </details>
+    {% endif %}
+    <input type="hidden" name="source_url" value="{{source_url}}">
+    <input type="hidden" name="source_kind" value="{{source_kind}}">
+    <input type="hidden" name="fetched_at" value="{{fetched_at}}">
+    {% if not hits and policy_text %}
+      <details class="policy-details"><summary>View retrieved policy text</summary><textarea name="policy_text" rows="10" readonly>{{policy_text}}</textarea></details>
+    {% endif %}
+  </div>
+</form>
+{% if hits is not none and hits %}
+<section class="results">
+  <p class="eyebrow">ANALYSIS RESULTS</p>
+  <h2>Policy passages related to “{{query}}”</h2>
+  <p class="muted">These are potential matches, not proof of wrongdoing or a legal conclusion. Read the linked policy and surrounding sections.</p>
+  {% if source_url %}<p class="small">Source: <a class="text-link" href="{{source_url}}" target="_blank" rel="noopener">Open original policy ↗</a></p>{% endif %}
+  <p class="muted small">Search terms used: {{expanded_terms|join(', ')}}</p>
+  {% for hit in hits %}
+  <div class="result-group">
+    <h3>{{loop.index}}. {{hit.section}}</h3>
+    <blockquote>{{hit.passage}}<small>Related wording found: {{hit.terms|join(', ')}}</small></blockquote>
+    <div class="plain-explanation"><strong>In simpler terms</strong><p>{{hit.explanation}}</p></div>
+  </div>
+  {% endfor %}
+</section>
+{% elif hits is not none and query %}
+<section class="results"><h2>No relevant passage found</h2><p>The retrieved text did not contain a close match for “{{query}}”. This does not prove the policy does not cover the issue. The site may have returned incomplete or dynamically loaded text, or the policy may use different wording.</p></section>
+{% endif %}
+<section class="notice"><strong>How this works</strong><p>DataRefuse retrieves the configured official policy page when possible, then searches the readable text using related terms and plain-language expansions. Some apps publish policies in dynamic pages or separate in-app notices; if retrieval is incomplete, results may miss relevant clauses. This prototype does not provide legal advice.</p></section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}{{a.name}} · DataRefuse{% endblock %}
+{% block content %}
+<a class="back" href="/">← All apps</a>
+<section class="page-head">
+  <p class="eyebrow">{{a.category}}</p>
+  <h1>{{a.name}}</h1>
+  <p>{{a.purpose}}</p>
+</section>
+<section class="two-col">
+  <div class="panel">
+    <p class="eyebrow">DATA CATEGORIES TO CHECK</p>
+    <h2>What information may be involved?</h2>
+    <p class="muted">These are research prompts based on the app's service type. Confirm the exact practices in the current official policy.</p>
+    <ul class="data-list">{% for item in a.collects %}<li><span>↗</span>{{item}}</li>{% endfor %}</ul>
+    <a class="text-link" target="_blank" rel="noopener" href="{{a.policy}}">Open official policy / service page ↗</a>
+  </div>
+  <div class="panel">
+    <p class="eyebrow">POLICY REVIEW</p>
+    <h2>Check a concern</h2>
+    <p>Search this app's policy for an issue in your own words, such as location tracking, data sharing or targeted advertising.</p>
+    <a class="btn" href="/analyzer?app={{a.name|urlencode}}">Analyse {{a.name}} policy →</a>
+  </div>
+</section>
+<section class="panel alternatives-section">
+  <p class="eyebrow">ALTERNATIVES TO CONSIDER</p>
+  <h2>Other ways to do the same thing</h2>
+  <p class="muted">These options may involve less platform-based tracking or give users more control. They are not certified as data-free. Compare their current policies, permissions, features and trade-offs before switching.</p>
+  <div class="alternative-grid">
+  {% for alt in alternatives %}
+    <article class="alternative-card">
+      <h3>{{alt.name}}</h3>
+      <p>{{alt.why}}</p>
+    </article>
+  {% endfor %}
+  </div>
+</section>
+<section class="notice">
+  <strong>How to interpret these alternatives</strong>
+  <p>“Privacy-oriented” does not mean “collects no data”. Open-source, decentralised, offline and direct-ordering options can change who controls the data and how much is shared, but the specific app, server or provider still matters.</p>
+</section>
+{% endblock %}
