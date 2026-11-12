@@ -18,3 +18,11 @@
 .alternative-card h3{margin:0 0 8px;font-size:1.05rem}
 .alternative-card p{margin:0;color:#52656b;line-height:1.55}
 @media(max-width:700px){.alternative-grid{grid-template-columns:1fr}}
+
+/* ChatGPT handoff */
+.ask-ai-panel{margin-top:28px}
+.ask-ai-panel textarea{width:100%;box-sizing:border-box;padding:14px;border:1px solid var(--line,#d7e2de);border-radius:10px;font:inherit;resize:vertical;margin:8px 0 14px}
+.ask-ai-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn-secondary{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid var(--line,#cbd5d1);border-radius:9px;background:#fff;color:#174f49;text-decoration:none;font-weight:700}
+.policy-passage{white-space:pre-wrap}
+@media(max-width:600px){.ask-ai-actions{flex-direction:column;align-items:stretch}.ask-ai-actions .btn,.ask-ai-actions .btn-secondary{text-align:center}}
