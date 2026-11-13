@@ -5,7 +5,6 @@
   <p class="eyebrow">RESEARCH / CONSENT ARCHITECTURE / INDIA</p>
   <h1>The Consent and<br><em>Data Refusal Audit.</em></h1>
   <p class="lead">We examine whether digital platforms give people meaningful, accessible and reversible control over how their personal data is collected and used.</p>
-  <div class="audit-meta"><span>5 platforms</span><span>6 dimensions</span><span>Logged out · English</span><span>13 Nov 2026</span></div>
 </section>
 
 <section class="audit-callout">
@@ -29,26 +28,46 @@
 
 <section class="audit-section">
   <div class="section-head"><div><p class="eyebrow">02 / DIMENSION AVERAGES</p><h2>Where the friction sits</h2></div><span class="muted">Mean score out of 2</span></div>
-  <div class="mean-list">
-  {% for d in dimensions %}
-    <div class="mean-row"><span>{{d.name}}</span><div class="mean-track"><i style="width:{{ (d.mean|float / 2 * 100)|round }}%"></i></div><b>{{d.mean}}</b></div>
-  {% endfor %}
+  <div class="table-wrap audit-table-wrap">
+    <table class="audit-table audit-detail-table">
+      <thead><tr><th>Dimension</th><th>Mean score / 2</th><th>Assessment</th></tr></thead>
+      <tbody>
+      {% for d in dimensions %}
+        <tr><td class="platform-name">{{d.name}}</td><td><span class="mean-chip">{{d.mean}} / 2</span></td><td>{{d.why}}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
   </div>
   <div class="audit-callout compact"><p class="eyebrow">KEY FINDING</p><h2>Reversibility outranks refusal.</h2><p>Platforms score better on letting users change a choice inside an account than on letting them refuse optional data use before or at the point of collection. Refusal accessibility has the lowest mean score: <strong>0.6 out of 2</strong>.</p></div>
 </section>
 
 <section class="audit-section">
   <div class="section-head"><div><p class="eyebrow">03 / WHAT THE SCORES REVEAL</p><h2>Four patterns of friction</h2></div></div>
-  <div class="finding-grid">{% for f in findings %}
-    <article class="finding"><p class="eyebrow">0{{loop.index}} / OBSERVATION</p><h3>{{f.title}}</h3><p>{{f.body}}</p></article>
-  {% endfor %}</div>
+  <div class="table-wrap audit-table-wrap">
+    <table class="audit-table audit-detail-table">
+      <thead><tr><th>Observation</th><th>What the audit found</th></tr></thead>
+      <tbody>{% for f in findings %}
+        <tr><td class="platform-name"><span class="table-index">0{{loop.index}}</span>{{f.title}}</td><td>{{f.body}}</td></tr>
+      {% endfor %}</tbody>
+    </table>
+  </div>
 </section>
 
 <section class="audit-section">
   <div class="section-head"><div><p class="eyebrow">04 / THE AUDIT INSTRUMENT</p><h2>Six dimensions. One question: can people exercise choice?</h2></div></div>
-  <div class="dimension-grid">{% for d in dimensions %}
-    <article class="dimension-card"><div class="dimension-top"><span class="mean-chip">{{d.mean}} / 2</span><h3>{{loop.index}}. {{d.name}}</h3></div><p class="dimension-question">{{d.question}}</p><p class="dimension-why">{{d.why}}</p><div class="rubric"><p><b>0</b> {{d.rubric[0]}}</p><p><b>1</b> {{d.rubric[1]}}</p><p><b>2</b> {{d.rubric[2]}}</p></div><p class="dimension-observed"><strong>Observed:</strong> {{d.observed}}</p></article>
-  {% endfor %}</div>
+  <div class="table-wrap audit-table-wrap">
+    <table class="audit-table audit-rubric-table">
+      <thead><tr><th>Dimension / mean</th><th>What it measures</th><th>0 — Absent</th><th>1 — Partial</th><th>2 — Clear</th><th>Observed result</th></tr></thead>
+      <tbody>{% for d in dimensions %}
+        <tr>
+          <td class="platform-name"><span class="mean-chip">{{d.mean}} / 2</span><br>{{loop.index}}. {{d.name}}</td>
+          <td>{{d.question}}<br><span class="table-muted">{{d.why}}</span></td>
+          <td>{{d.rubric[0]}}</td><td>{{d.rubric[1]}}</td><td>{{d.rubric[2]}}</td>
+          <td>{{d.observed}}</td>
+        </tr>
+      {% endfor %}</tbody>
+    </table>
+  </div>
 </section>
 
 <section class="audit-method">
