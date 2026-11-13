@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DataRefuse &mdash; The infrastructure of refusal</title>
+<meta name="description" content="DataRefuse is a public-interest technology organisation working on data refusal, user consent and the right to opt out of AI. Approach, evidence and validation.">
+<meta name="theme-color" content="#F6F2EA">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DataRefuse &mdash; The infrastructure of refusal">
+<meta property="og:description" content="Making the terms visible, refusal cheap, and refusal collective. A Section 8 company in formation, New Delhi.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23C2451E'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='30' fill='%23F6F2EA' text-anchor='middle'%3EDR%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#F6F2EA;
+    --ink:#12141A;
+    --acc:#C2451E;
+    --teal:#1F4E45;
+    --mut:#6E6A62;
+    --line:#D6D0C1;
+    --off:#FBF8F1;
+    --pale:#EDE6D6;
+    --sans:"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --serif:Georgia,"Times New Roman",Times,serif;
+    --mono:Consolas,"Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:16px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline;text-underline-offset:3px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--bg);padding:10px 14px;z-index:100}
+  .skip:focus{left:12px;top:12px}
+
+  /* header */
+  .site-head{
+    position:sticky;top:0;z-index:40;
+    background:rgba(246,242,234,.94);
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(8px);
+  }
+  .head-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:68px}
+  .brand{display:flex;align-items:center;gap:12px;color:var(--ink)}
+  .brand:hover{text-decoration:none}
+  .mark{
+    width:36px;height:36px;background:var(--acc);color:var(--bg);
+    display:grid;place-items:center;font-family:var(--serif);font-size:16px;
+    letter-spacing:.02em;flex:none;
+  }
+  .brand strong{display:block;font-family:var(--serif);font-weight:400;font-size:18px;line-height:1.1}
+  .brand small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-top:3px}
+  nav.top{display:flex;gap:20px;flex-wrap:wrap;justify-content:flex-end}
+  nav.top a{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut)}
+  nav.top a:hover{color:var(--acc);text-decoration:none}
+
+  /* hero */
+  .hero{padding:78px 0 62px;border-bottom:1px solid var(--line)}
+  .hero-grid{display:grid;grid-template-columns:1.45fr .55fr;gap:44px;align-items:end}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin:0 0 16px}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(46px,6.2vw,76px);line-height:1.02;letter-spacing:-.015em;margin:0 0 24px;max-width:760px}
+  .lede{font-size:19px;line-height:1.55;color:#3B3833;max-width:640px;margin:0 0 26px}
+  .meta-chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);padding:6px 9px;color:var(--mut);background:var(--off)}
+  .stat-card{background:var(--ink);color:var(--bg);padding:26px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .stat b{display:block;font-family:var(--serif);font-weight:400;font-size:34px;line-height:1;color:var(--bg)}
+  .stat span{display:block;font-size:10px;line-height:1.35;color:#BDB7AA;margin-top:7px;letter-spacing:.02em}
+  .stat .accent{color:#E58A63}
+
+  /* sections */
+  section{padding:66px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:none}
+  .sec-label{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .sec-label .n{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--acc);border:1px solid var(--acc);padding:2px 6px}
+  .sec-label .t{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+  h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.8vw,42px);line-height:1.12;letter-spacing:-.01em;margin:0 0 18px;max-width:800px}
+  h3{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.25;margin:0 0 8px}
+  h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin:0 0 6px}
+  p{margin:0 0 14px;max-width:820px}
+  .intro{font-size:17.5px;color:#3B3833;max-width:820px}
+  .muted{color:var(--mut)}
+  .small{font-size:13px;line-height:1.55;color:var(--mut)}
+
+  /* grids and cards */
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:26px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+  .card{background:var(--off);border:1px solid var(--line);padding:22px}
+  .card .num{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--acc);margin-bottom:9px}
+  .card h3{font-size:19px}
+  .card p{font-size:14px;line-height:1.6;margin:0;color:#3B3833;max-width:none}
+  .card .rule-out{font-size:12.5px;color:var(--mut);border-top:1px solid var(--line);margin-top:13px;padding-top:10px}
+  .card .rule-out b{color:var(--ink);font-weight:600}
+
+  /* callouts */
+  .callout{background:var(--pale);border-left:3px solid var(--acc);padding:18px 22px;margin:26px 0;max-width:900px}
+  .callout p{margin:0;font-size:15px;line-height:1.6;max-width:none}
+  .callout.dark{background:var(--ink);color:var(--bg);border-left-color:var(--acc)}
+  .callout.dark p{color:#E7E1D5}
+  .quote{border-left:2px solid var(--ink);padding-left:20px;margin:30px 0;font-family:var(--serif);font-size:22px;line-height:1.4;max-width:820px}
+  .quote em{color:var(--acc);font-style:normal}
+
+  /* tables */
+  .table-wrap{overflow-x:auto;margin:24px 0 8px;border:1px solid var(--line);background:var(--off)}
+  table{width:100%;border-collapse:collapse;min-width:720px}
+  caption{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);padding:10px 12px;border-bottom:1px solid var(--line)}
+  th,td{padding:11px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+  th{background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:400}
+  td{font-size:13px;line-height:1.5}
+  tbody tr:nth-child(even){background:#F2ECDF}
+  tbody tr:last-child td{border-bottom:none}
+  td strong{font-weight:600}
+  .nowrap{white-space:nowrap}
+  .tnum{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px}
+
+  /* fronts */
+  .front{border-top:2px solid var(--acc);padding:26px 0 8px;margin-top:8px}
+  .front:first-of-type{border-top-width:2px}
+  .front-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+  .front-head .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase}
+  .front-head h3{margin:0;font-size:24px}
+  .front p{font-size:14.5px;max-width:900px}
+  .front-grid{display:grid;grid-template-columns:1.4fr .8fr .9fr;gap:22px;margin:14px 0 4px}
+  .front-grid h4{margin-bottom:5px}
+  .front-grid p,.front-grid li{font-size:13px;line-height:1.55;color:#3B3833}
+  .front-grid ul{margin:0;padding-left:17px}
+  .front-grid li{margin-bottom:4px}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:28px}
+  .step{border-top:1px solid var(--line);padding-top:12px}
+  .step .n{font-family:var(--mono);font-size:10px;color:var(--acc);letter-spacing:.1em}
+  .step p{font-size:12.5px;line-height:1.5;margin:6px 0 0;color:#3B3833}
+
+  /* lists */
+  .clean{list-style:none;margin:18px 0;padding:0}
+  .clean li{position:relative;padding-left:22px;margin-bottom:11px;font-size:14.5px;line-height:1.55;max-width:860px}
+  .clean li:before{content:"";position:absolute;left:0;top:.55em;width:7px;height:7px;background:var(--acc)}
+  .clean.teal li:before{background:var(--teal)}
+  .cols-2{columns:2;column-gap:34px}
+  .cols-2 li{break-inside:avoid}
+
+  /* stats strip */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:30px}
+  .strip div{background:var(--off);padding:18px 20px}
+  .strip b{display:block;font-family:var(--serif);font-size:28px;font-weight:400;line-height:1;color:var(--acc)}
+  .strip span{display:block;font-size:11px;color:var(--mut);margin-top:7px;line-height:1.4}
+
+  /* footer */
+  footer{background:var(--ink);color:var(--bg);padding:44px 0 34px;margin-top:0}
+  .foot-grid{display:grid;grid-template-columns:1.4fr .6fr .6fr;gap:30px}
+  footer .brand strong{color:var(--bg)}
+  footer p{font-size:12.5px;line-height:1.6;color:#BDB7AA;max-width:440px}
+  footer h4{color:#E58A63;margin-bottom:8px}
+  footer a{color:#E7E1D5;font-size:12.5px}
+  footer ul{list-style:none;margin:0;padding:0}
+  footer li{margin-bottom:6px}
+  .foot-bottom{border-top:1px solid #33363C;margin-top:30px;padding-top:16px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#8B877E}
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .grid-3,.grid-4{grid-template-columns:1fr 1fr}
+    .front-grid{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr 1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    nav.top{display:none}
+  }
+  @media (max-width:620px){
+    .wrap{padding:0 18px}
+    section{padding:48px 0}
+    .hero{padding:52px 0 44px}
+    .grid-3,.grid-4,.grid-2{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .strip{grid-template-columns:1fr 1fr}
+    .cols-2{columns:1}
+    .stat-card{grid-template-columns:1fr 1fr}
+    body{font-size:15px}
+  }
+  @media print{
+    .site-head{display:none}
+    section{break-inside:avoid;page-break-inside:avoid}
+    .table-wrap{overflow:visible}
+    table{min-width:0}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap head-inner">
+    <a class="brand" href="#top" aria-label="DataRefuse home">
+      <span class="mark" aria-hidden="true">DR</span>
+      <span><strong>DataRefuse</strong><small>Public-interest technology</small></span>
+    </a>
+    <nav class="top" aria-label="Page sections">
+      <a href="#approach">Approach</a>
+      <a href="#environment">Environment</a>
+      <a href="#technology">Technology</a>
+      <a href="#governance">Governance</a>
+      <a href="#validation">Validation</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#remaining">What remains</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">DataRefuse &nbsp;/&nbsp; Public-interest technology &nbsp;/&nbsp; New Delhi</p>
+      <h1>We build the infrastructure of refusal.</h1>
+      <p class="lede">DataRefuse is a public-interest technology organisation working on data refusal, user consent and the right to opt out of AI. We make the terms visible, make refusal cheap, and give communities a way to refuse together.</p>
+      <div class="meta-chips">
+        <span class="chip">Section 8 company (proposed)</span>
+        <span class="chip">New Delhi, India</span>
+        <span class="chip">datarefuse.onrender.com</span>
+      </div>
+    </div>
+    <aside class="stat-card" aria-label="DataRefuse at a glance">
+      <div class="stat"><b>5</b><span>platforms audited, 6 dimensions, 30 scored cells</span></div>
+      <div class="stat"><b class="accent">37/60</b><span>baseline refusal score across the five platforms</span></div>
+      <div class="stat"><b>3</b><span>fronts: legible, exercisable, collective</span></div>
+      <div class="stat"><b>8.8</b><span>full-time equivalent team in the Year-1 plan</span></div>
+    </aside>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">00</span><span class="t">Who we are</span></div>
+    <h2>A civil society organisation for the moment before collection.</h2>
+    <p class="intro">India&rsquo;s data protection law is built on consent: notice, agreement, withdrawal. It regulates the moment of agreement and assumes a choice was available there. Our subject is the moment before: whether a person could say no to optional data use without losing access to a service, a job or a benefit.</p>
+    <p>We are being set up as a <strong>Section 8 company</strong> under the Companies Act, 2013: a not-for-profit company limited by guarantee, with a locked objects clause, no dividend, and an asset lock on dissolution. That form gives us a board, audited accounts and a credible contracting entity for grants and CSR, without the succession problems of a trust.</p>
+    <p>We work on three fronts at once, because the problem has three mechanisms. <strong>Legibility</strong> addresses imperfect information. <strong>Exercisability</strong> addresses the cost and availability of refusal. <strong>Collective voice</strong> addresses the absence of a mechanism for articulating values. A fourth, cross-cutting function &mdash; <strong>holding the line</strong> &mdash; protects the space in which the other three operate.</p>
+    <div class="strip">
+      <div><b>0 of 5</b><span>platforms presented a consent gate to a logged-out Indian user</span></div>
+      <div><b>0.6 / 2</b><span>mean score for refusal accessibility, the weakest dimension</span></div>
+      <div><b>2&ndash;5</b><span>navigations to refuse optional data use; zero to accept</span></div>
+      <div><b>1.0 / 2</b><span>intelligibility on every platform tested</span></div>
+    </div>
+    <p class="small" style="margin-top:12px">Source: Consent and Data Refusal Audit, 13 November 2026. Exploratory, not a compliance verdict. Method and limits are set out under <a href="#evidence">Evidence</a>.</p>
+  </div>
+</section>
+
+<section id="approach">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">01</span><span class="t">Approach</span></div>
+    <h2>One instrument, three fronts, one constituency.</h2>
+    <p class="intro">The approach is deliberately narrow. We do not begin with service delivery at scale. We begin by occupying an unoccupied niche &mdash; refusal, as distinct from consent, privacy and free expression &mdash; and convert each asset into the next: evidence into credibility, credibility into network, network into institution.</p>
+
+    <h3 style="margin-top:34px">What we commit to</h3>
+    <p class="muted" style="font-size:14.5px">Six commitments determine what we build and what we refuse to build.</p>
+    <div class="grid-3">
+      <article class="card"><div class="num">01</div><h3>Refusal, not consent</h3><p>Every product is judged by whether it reduces the cost of saying no, not by whether it increases comprehension of a policy.</p><p class="rule-out"><b>Rules out:</b> a library of explainers with no action; a privacy score that ranks but does not help.</p></article>
+      <article class="card"><div class="num">02</div><h3>Before collection, not after</h3><p>We prioritise the moment of collection: pre-consent gates, reject-all, and no account required to refuse.</p><p class="rule-out"><b>Rules out:</b> tools that only help you change settings after the data is gone.</p></article>
+      <article class="card"><div class="num">03</div><h3>Consequences visible</h3><p>Every refusal route states what will change if you refuse &mdash; functionality, price, access.</p><p class="rule-out"><b>Rules out:</b> advice that assumes refusal is free when it is not.</p></article>
+      <article class="card"><div class="num">04</div><h3>Collective where harms are collective</h3><p>Group data gets group consent mechanisms, not just individual settings.</p><p class="rule-out"><b>Rules out:</b> treating a workers&rsquo; collective or a village as a set of independent consumers.</p></article>
+      <article class="card"><div class="num">05</div><h3>Public goods, open methods</h3><p>The rubric, data, code and findings are published and reusable by regulators, researchers and other CSOs.</p><p class="rule-out"><b>Rules out:</b> proprietary scoring; paid access to the public-interest layer.</p></article>
+      <article class="card"><div class="num">06</div><h3>Humility, with correction built in</h3><p>We publish limits, invite contestation, correct in public and pre-register the method.</p><p class="rule-out"><b>Rules out:</b> claiming a compliance verdict from an exploratory audit.</p></article>
+    </div>
+
+    <h3 style="margin-top:46px">What we do</h3>
+    <p class="muted" style="font-size:14.5px">Activities for the first 24 months, the outputs they produce, and the evidence base behind each front.</p>
+
+    <article class="front">
+      <div class="front-head"><span class="tag">Front I</span><h3>Legible &mdash; make the terms visible</h3></div>
+      <p>The first front attacks imperfect information. If refusal is invisible, no amount of individual resolve will produce it.</p>
+      <div class="front-grid">
+        <div><h4>Activities</h4><p>Annual <strong>Consent and Data Refusal Audit</strong> across 5 to 20 platforms, with logged-out and signed-in passes. Platform dossiers on what is collected, what can be refused and what it costs. A <strong>policy analyser</strong> that maps a clause to a purpose, a control and a DPDP provision. Plain-language &ldquo;if you say no&rdquo; cards in English, Hindi and three regional languages.</p></div>
+        <div><h4>Outputs</h4><ul><li>Index and annual report</li><li>20 platform dossiers</li><li>Policy analyser</li><li>Five-language card set</li><li>Open dataset</li></ul></div>
+        <div><h4>Evidence base</h4><p>Audit rubric (Appendix B); ToS;DR and PrivacySpy as precedents; Ranking Digital Rights as the ranking model.</p></div>
+      </div>
+    </article>
+
+    <article class="front">
+      <div class="front-head"><span class="tag">Front II</span><h3>Exercisable &mdash; make refusal cheap</h3></div>
+      <p>The second front attacks cost asymmetry. A right that takes five navigations, an account and a policy reading is not available to most people.</p>
+      <div class="front-grid">
+        <div><h4>Activities</h4><p>A <strong>data rights assistant</strong> that turns a concern into a valid request &mdash; refuse, withdraw or erase &mdash; addressed to the right channel, with an escalation ladder from fiduciary to grievance officer, Data Protection Board and consumer forum. A directory of <strong>refusal-preserving alternatives</strong>. Assisted refusal sessions through partners. From Year 2, a partnership with a registered <strong>Consent Manager</strong> to put refusal in the same dashboard as consent.</p></div>
+        <div><h4>Outputs</h4><ul><li>Request drafts generated</li><li>Successful refusals</li><li>Escalation cases</li><li>Consent-manager pilot</li></ul></div>
+        <div><h4>Evidence base</h4><p>Live prototype; Global Privacy Control and the Sephora enforcement; RBI Account Aggregator consent artefacts; Consumer Reports&rsquo; Permission Slip.</p></div>
+      </div>
+    </article>
+
+    <article class="front">
+      <div class="front-head"><span class="tag">Front III</span><h3>Collective &mdash; make refusal political</h3></div>
+      <p>The third front attacks the absence of a values-articulation mechanism. Individual consent cannot express what a community will not accept.</p>
+      <div class="front-grid">
+        <div><h4>Activities</h4><p><strong>Data refusal assemblies</strong> with gig workers, domestic workers, disabled people, trans people and students. Participatory action research: data diaries and group mapping of what is necessary, harmful or unacceptable. <strong>Community data agreements.</strong> Translation of findings into policy recommendations and into standards for platform design.</p></div>
+        <div><h4>Outputs</h4><ul><li>6 assemblies a year</li><li>3 community agreements</li><li>Annual citizen brief</li><li>4 policy submissions</li></ul></div>
+        <div><h4>Evidence base</h4><p>Our Data Bodies&rsquo; digital defence playbook; Benjamin&rsquo;s informed refusal; Jasanoff&rsquo;s technologies of humility.</p></div>
+      </div>
+    </article>
+
+    <article class="front">
+      <div class="front-head"><span class="tag">Front IV</span><h3>Hold the line &mdash; protect the space</h3></div>
+      <p>The cross-cutting front. It does not produce the service; it keeps the conditions in which the service can exist.</p>
+      <div class="front-grid">
+        <div><h4>Activities</h4><p>Rapid response to regressive amendments, including s. 3(c)(ii), s. 7, s. 44(3) and state exemptions. Legal interventions with partners. RTI requests, public commentary and defensive research on state surveillance.</p></div>
+        <div><h4>Outputs</h4><ul><li>4 rapid responses a year</li><li>2 legal briefs</li><li>RTI disclosures</li></ul></div>
+        <div><h4>Evidence base</h4><p>IFF and SFLC.in litigation record; Puttaswamy jurisprudence.</p></div>
+      </div>
+    </article>
+
+    <h3 style="margin-top:46px">What this looks like for one person</h3>
+    <p>A domestic worker in Pune opens a WhatsApp link sent by her union. She picks her platform from a list, chooses &ldquo;I want to refuse location tracking&rdquo;, answers three questions, and receives a draft in Marathi with the correct grievance-officer address and the statutory 30-day expectation. She sends it. If there is no reply, the same thread offers an escalation to the Data Protection Board, pre-filled. At the end she is asked one question: &ldquo;Did refusing cost you anything?&rdquo; Her answer becomes a data point in the Refusal Gap Index.</p>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><p>A union sends a WhatsApp link.</p></div>
+      <div class="step"><div class="n">02</div><p>She picks her platform from a list.</p></div>
+      <div class="step"><div class="n">03</div><p>Three questions: what, why, which use.</p></div>
+      <div class="step"><div class="n">04</div><p>A draft in Marathi, with the right address.</p></div>
+      <div class="step"><div class="n">05</div><p>She sends it. The 30-day clock starts.</p></div>
+      <div class="step"><div class="n">06</div><p>No reply: one tap escalates to the DPB.</p></div>
+    </div>
+    <div class="callout"><p><strong>That is the whole model in one interaction:</strong> legibility, exercise, evidence and a collective record. She never has to create an account, read a policy, or explain herself twice.</p></div>
+  </div>
+</section>
+
+<section id="environment">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">02</span><span class="t">The environment</span></div>
+    <h2>Who sets the rules, who provides the resources, and where a new organisation can stand.</h2>
+    <p class="intro">An organisation is only as good as its reading of the environment it must survive in. We distinguish the <strong>institutional environment</strong> &mdash; the formal and informal rules that confer standing and constrain behaviour &mdash; from the <strong>task environment</strong> &mdash; the actors and resources on which we depend for money, access and legitimacy.</p>
+    <div class="table-wrap">
+      <table>
+        <caption>The rules that govern us</caption>
+        <thead><tr><th scope="col">Rule-setter</th><th scope="col">Instrument</th><th scope="col">What it requires of us</th><th scope="col">Our posture</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Parliament</strong></td><td>DPDP Act, 2023 (ss. 3, 5, 6, 7, 9, 11&ndash;17, 27, 33, 44)</td><td>Compliance as a Data Fiduciary; a lawful basis for research data; no circumvention.</td><td>Comply to a higher standard than the law requires; publish our own DPIA.</td></tr>
+          <tr><td><strong>MeitY</strong></td><td>DPDP Rules, 2025; consent-manager registration; SDF designation; AI governance</td><td>Rule 4 and Schedule I conditions (Indian incorporation, &#8377;2 crore net worth, interoperability); Rule 3 notice standards.</td><td>Engage in consultation; seek a public-interest route into the consent-manager regime.</td></tr>
+          <tr><td><strong>Data Protection Board</strong></td><td>ss. 27&ndash;28; Rules 17&ndash;23</td><td>Complaint procedure; evidence standards; digital filing.</td><td>Build a case file the Board can use; never overstate a finding as a legal violation.</td></tr>
+          <tr><td><strong>TDSAT</strong></td><td>s. 29; Rule 22</td><td>Appellate route.</td><td>Support others&rsquo; appeals; do not litigate alone without counsel.</td></tr>
+          <tr><td><strong>CCPA</strong></td><td>Consumer Protection Act, 2019; Dark Patterns Guidelines, 2023</td><td>No false urgency, forced action or subscription traps.</td><td>Use as a complementary hook where consent design is clearly manipulative.</td></tr>
+          <tr><td><strong>RBI</strong></td><td>Account Aggregator framework</td><td>Consent artefact standards; purpose codes; revocation.</td><td>Treat as the closest existing model of exercisable consent in India.</td></tr>
+          <tr><td><strong>Platforms</strong></td><td>Terms of service, robots.txt, rate limits, bot management</td><td>Access to the interface we audit; restrictions on scraping and automation.</td><td>Manual, logged-out, documented observation; seek researcher access; publish what we cannot see.</td></tr>
+          <tr><td><strong>Funders and the state</strong></td><td>Grant agreements, CSR rules, FCRA, 12A/80G, Companies Act</td><td>Reporting, restricted funds, political-activity limits, audit.</td><td>Diversify; cap any funder at 25%; no pre-publication review; build a reserve.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p><strong>Two rule-systems matter more than the rest.</strong> The first is the DPDP framework, because it gives us a legitimate vocabulary and a forum. The second is private rule-setting by platforms: their terms determine whether we can observe the interface at all. During the audit we were served a bot-management cookie by Amazon and a sign-in wall by LinkedIn and Reddit. Those are not incidental obstacles; they are the object of study exercising control over the researcher. That is why our method relies on logged-out, manual, screenshot-documented observation, and why we argue for a statutory research-access provision modelled on Article 40 of the EU Digital Services Act.</p>
+    </div>
+
+    <div class="grid-3">
+      <article class="card"><div class="num">Money</div><h3>Diversified, never platform money</h3><p>Domestic and international philanthropy, CSR under Schedule VII (education and gender equality), multilateral agencies, academic grants, individual giving, and a capped earned-income stream from training and commissioned research. We do not take money from the platforms we audit, their foundations, or industry bodies that represent them.</p></article>
+      <article class="card"><div class="num">Access</div><h3>Documentation, not permission</h3><p>From platforms as a matter of public documentation; from the Data Protection Board as a complainant and commenter; from communities through partner organisations and paid community researchers.</p></article>
+      <article class="card"><div class="num">Legitimacy</div><h3>Three currencies</h3><p>Evidence that survives scrutiny, a constituency that is genuinely represented, and independence that is visible in the accounts. None of the three can be asserted; each has to be produced and published.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="growth">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">03</span><span class="t">How we grow</span></div>
+    <h2>Three horizons, each converting one asset into the next.</h2>
+    <div class="grid-3">
+      <article class="card"><div class="num">H1 &nbsp;/&nbsp; 0&ndash;12 months</div><h3>Niche authority</h3><p>Be the recognised source on refusal in India. Audit v2; Section 8 incorporation; ethics protocol; three community pilots; first DPB submission; website in three languages; six partner MOUs.</p><p class="rule-out"><b>Success test:</b> index cited by 10 outlets and 2 regulators; 5,000 request drafts; 3 partners using the instrument.</p></article>
+      <article class="card"><div class="num">H2 &nbsp;/&nbsp; 12&ndash;24 months</div><h3>Network</h3><p>Turn a product into movement infrastructure. A 20-platform audit; 10 languages; state pilots in Karnataka, Kerala and Delhi; a consent-manager partnership; the annual <em>State of Refusal</em>; first enforcement escalations.</p><p class="rule-out"><b>Success test:</b> 20 partners; 50,000 users; 2 state governments engaged; 1 platform changes a default.</p></article>
+      <article class="card"><div class="num">H3 &nbsp;/&nbsp; 24&ndash;36 months</div><h3>Institution</h3><p>Become part of the accountability infrastructure. A registered consent manager with a public-interest design, subject to the &#8377;2 crore capital condition; an accreditation standard; a training arm; an endowment.</p><p class="rule-out"><b>Success test:</b> registration achieved or a public-interest route notified; 30% of costs from non-grant income; five-year funding secured.</p></article>
+    </div>
+    <p style="margin-top:26px">The sequencing is deliberate. We do not scale a service before the instrument is trusted, because an unreliable audit destroys the only asset that makes the service credible. And we do not pursue registration as a consent manager before we have the evidence and the constituency that would justify the capital, because registration without a public-interest mandate would simply create another private intermediary.</p>
+    <div class="callout dark">
+      <p><strong>Theory of change.</strong> If refusal is measured in a way that is comparable, public and hard to dismiss, and if people are given a cheap route to exercise it, and if affected communities can articulate what they will not accept, then platforms face a reputational, regulatory and political cost for bad refusal architecture, and regulators gain an enforceable evidentiary basis, so that refusal moves from an exception users must request to a default they can rely on.</p>
+    </div>
+  </div>
+</section>
+
+<section id="technology">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">04</span><span class="t">Technology</span></div>
+    <h2>The technology is the delivery channel, not a side project.</h2>
+    <p class="intro">A prototype is already live at <a href="https://datarefuse.onrender.com" target="_blank" rel="noopener">datarefuse.onrender.com</a>: a policy analyser, a data-rights assistant that drafts refuse, withdraw and delete requests, and the published audit. The audit instrument itself &mdash; six dimensions, a 0&ndash;2 rubric, evidence layers and confidence flags &mdash; exists as a working research product with a raw data file and a documented method.</p>
+    <div class="table-wrap">
+      <table>
+        <caption>Four layers of one system</caption>
+        <thead><tr><th scope="col">Layer</th><th scope="col">What it is</th><th scope="col">Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Research instrument</strong></td><td>The audit rubric and scoring sheet; the evidence log with screenshots, DOM reads and documentation.</td><td>Makes refusal measurable, comparable over time and contestable.</td></tr>
+          <tr><td><strong>Delivery channel</strong></td><td>The website: analyser, request generator, alternatives directory, language variants.</td><td>Near-zero marginal cost per additional person; works without an account.</td></tr>
+          <tr><td><strong>Public record</strong></td><td>Open dataset, published method, corrections log, annual index.</td><td>Regulators, journalists and researchers can verify or dispute us.</td></tr>
+          <tr><td><strong>Organising tool</strong></td><td>Partner-facing worksheets, assisted-refusal scripts, community data diaries and a feedback loop.</td><td>Connects individual refusals to collective evidence.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-2" style="margin-top:30px">
+      <div>
+        <h3>Benefits of using technology</h3>
+        <ul class="clean">
+          <li><strong>Scale at near-zero marginal cost.</strong> One request template serves one person or fifty thousand; the analyser improves for everyone when one clause is added.</li>
+          <li><strong>Comparability and time series.</strong> A machine-readable rubric allows the same test to be repeated annually and across platforms, which turns an anecdote into a trend.</li>
+          <li><strong>Lower social cost of refusal.</strong> A person can act without confrontation, in their own language, without explaining themselves to a call centre.</li>
+          <li><strong>Evidence for advocacy.</strong> Aggregate refusal failures are more useful to a regulator than individual complaints, which are the only thing the current system collects.</li>
+          <li><strong>Anonymity and privacy by design.</strong> The assistant can run without accounts and without storing free text, which is itself a demonstration of the standard we demand.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="callout" style="margin-top:0">
+          <p><strong>The technology rule we hold ourselves to.</strong> Any feature that increases the number of people who can refuse without increasing the number of people who understand why they are refusing is a failure, because it turns a right into a transaction. The tool must explain, act and record &mdash; in that order.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:34px">Challenges, and how we govern them</h3>
+    <div class="table-wrap">
+      <table>
+        <caption>Seven risks in the technology layer</caption>
+        <thead><tr><th scope="col">Challenge</th><th scope="col">Risk</th><th scope="col">Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Accuracy and liability</strong></td><td>A generated request or policy reading is wrong; a user relies on it; we are accused of unauthorised legal practice or misleading conduct.</td><td>Deterministic, rule-based mapping first; retrieval-grounded generation with citations to the clause and provision; human legal review of templates; explicit &ldquo;research lead, not legal advice&rdquo; framing; published error rate and corrections policy.</td></tr>
+          <tr><td><strong>Our own DPDP compliance</strong></td><td>We process user inputs and become a Data Fiduciary with notice, security, breach and erasure duties.</td><td>Data minimisation (no free-text storage by default); client-side redaction; purpose-limited retention; published privacy notice and DPIA; breach procedure; DPO; annual security audit.</td></tr>
+          <tr><td><strong>Sensitive disclosure</strong></td><td>People disclose health, financial, sexual or immigration information to the tool.</td><td>Warn and strip by default; offer an offline or partner-assisted mode; no analytics on content; no third-party trackers; open-source client.</td></tr>
+          <tr><td><strong>Platform countermeasures</strong></td><td>Bot detection, rate limits, A/B tests and interface changes make findings unstable; terms may prohibit automation.</td><td>Manual, logged-out observation; timestamped evidence; confidence flags; multiple observations; researcher-access advocacy; never claim representativeness.</td></tr>
+          <tr><td><strong>Digital exclusion</strong></td><td>A web tool reaches the literate, connected, English-speaking minority and widens the gap it claims to close.</td><td>WhatsApp-first and low-bandwidth builds; voice and assisted modes; partner-delivered sessions; print and radio material; measure reach by segment, not in total.</td></tr>
+          <tr><td><strong>Vendor and model dependence</strong></td><td>Reliance on a cloud or model provider that can change terms, price or policy.</td><td>Open-weight or on-premise model for sensitive steps; abstraction layer; no single-vendor lock-in; export and self-host path.</td></tr>
+          <tr><td><strong>Measurement validity</strong></td><td>Scores are researcher judgements and may not reflect a typical user&rsquo;s experience.</td><td>Pre-registered rubric; two independent scorers with a reliability target (Cohen&rsquo;s kappa of at least 0.7); published raw evidence; no interval-level claims from ordinal data.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="governance">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">05</span><span class="t">Governance</span></div>
+    <h2>Designed so that the mission cannot be bought.</h2>
+    <p class="intro">We propose a <strong>Section 8 company</strong> under the Companies Act, 2013: a not-for-profit company limited by guarantee, with a locked objects clause, no dividend and an asset lock on dissolution. It gives us a board, audited accounts and a credible contracting entity for grants and CSR, without the succession problems of a trust. We will register under 12A and 80G for domestic philanthropy, and treat FCRA registration as a later, deliberate step with a clear understanding of its constraints on political activity.</p>
+    <div class="table-wrap">
+      <table>
+        <caption>Who decides</caption>
+        <thead><tr><th scope="col">Body</th><th scope="col">Composition</th><th scope="col">Decision rights</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Board of Directors</strong><br><span class="small">7 members</span></td><td>3 independent (law, technology, community development), 2 nominees of the Community Council, 2 founder or executive. No employee or director of an audited platform, or of an industry body representing one.</td><td>Strategy, budget, appointments, publication policy, removal of the Executive Director. A two-thirds majority for any change to objects.</td></tr>
+          <tr><td><strong>Community Council</strong><br><span class="small">9 members, paid sitting fees</span></td><td>Nominees of partner collectives: gig workers, domestic workers, disabled people, trans people, students, women&rsquo;s groups, plus two open seats.</td><td>Sets research priorities; approves 30% of the programme budget; must approve any publication of community findings; can require a review of any project.</td></tr>
+          <tr><td><strong>Research Committee</strong><br><span class="small">5 members</span></td><td>Research lead, two external academics, one council nominee, one technologist.</td><td>Method, rubric changes, pre-registration, reliability checks, retractions.</td></tr>
+          <tr><td><strong>Ethics Review</strong><br><span class="small">independent</span></td><td>External chair; includes a lawyer and a community representative.</td><td>Approves or refuses every study involving people; can halt a study.</td></tr>
+          <tr><td><strong>Executive Director</strong></td><td>Reports to the board.</td><td>Operations, hiring, spending within budget, external representation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:38px">&ldquo;Does not get swayed by market imperatives&rdquo; is a design requirement, not an aspiration.</h3>
+    <p>Ten rules make it structural:</p>
+    <ol class="clean cols-2">
+      <li>No funding from audited platforms, their foundations, or their industry associations; a published list of refused funds.</li>
+      <li>No single funder above 25% of annual income; no funder holds more than one board seat.</li>
+      <li>A standard grant clause: <strong>no pre-publication review, no editorial control, no veto over findings</strong>; funders receive the report when the public does.</li>
+      <li>No consulting, paid speaking or commissioned research for an entity under audit; a 24-month cooling-off period.</li>
+      <li>Register of interests for board, staff and council; mandatory recusal; published annually.</li>
+      <li>Community Council budget authority (30%) and a right to require review, so affected people have decision rights, not consultation rights.</li>
+      <li>Open methods and open data, so any claim can be independently reproduced &mdash; the strongest defence against both capture and error.</li>
+      <li>Right of reply: audited entities get 48 hours to correct factual errors before publication, with no power to change findings or delay indefinitely.</li>
+      <li>A public corrections log and an annual independent evaluation; the evaluator reports to the board and the funders.</li>
+      <li>Salary ratio capped at 1:6 between highest and lowest full-time pay; a six-month reserve; a dissolution clause transferring assets to a similar public-purpose entity.</li>
+    </ol>
+
+    <p style="margin-top:20px">Management runs on outcomes rather than outputs: quarterly OKRs are written against refusal success, policy change and community adoption, not against the number of reports published. A public dashboard reports reach, refusal outcomes, corrections and funding. Earned income &mdash; training for public institutions, accredited audits commissioned by regulators, and a paid professional version of the analyser for legal aid organisations &mdash; is capped at one-third of income, and never accepted from an audited party.</p>
+    <div class="callout"><p><strong>This is the firewall between the public-good layer and any privately beneficial layer:</strong> the public layer is never paywalled, and revenue never determines a finding.</p></div>
+  </div>
+</section>
+
+<section id="value">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">06</span><span class="t">Public value</span></div>
+    <h2>Public goods, private benefits, and why this approach fits.</h2>
+    <div class="table-wrap">
+      <table>
+        <caption>Asset by asset</caption>
+        <thead><tr><th scope="col">Asset</th><th scope="col">Character</th><th scope="col">Justification</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Refusal Gap Index and rubric</strong></td><td>Pure public good &mdash; non-rival, non-excludable</td><td>Everyone can use it; use by one party does not reduce it. Publishing it is not charity but strategy: adoption by regulators and researchers is what gives it force.</td></tr>
+          <tr><td><strong>Policy analyser (basic)</strong></td><td>Public good</td><td>Low marginal cost, high social value; keeps the floor accessible.</td></tr>
+          <tr><td><strong>Request assistant</strong></td><td>Common-pool infrastructure with private benefit</td><td>Each user benefits privately, but the aggregate refusal record is a shared resource for advocacy.</td></tr>
+          <tr><td><strong>Consent-manager dashboard (Year 3)</strong></td><td>Regulated infrastructure, public-interest mandate</td><td>Technically private infrastructure producing public benefits; must be governed so that the public mandate cannot be traded away.</td></tr>
+          <tr><td><strong>Training and accredited audits</strong></td><td>Private technology producing public benefit</td><td>Legitimate earned income that improves practice; firewalled from findings.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:20px">The distinction matters for how we govern. A privately owned tool that produces public benefits can be withdrawn, repriced or captured at any time; a public good cannot. Our commitment is that the layer which creates accountability stays in the public domain, and that any commercial layer sits on top of it without controlling it.</p>
+
+    <h3 style="margin-top:34px">Why this approach is appropriate to the challenge</h3>
+    <div class="table-wrap">
+      <table>
+        <caption>Mechanism, intervention and rationale</caption>
+        <thead><tr><th scope="col">Mechanism of the problem</th><th scope="col">Intervention</th><th scope="col">Why it should work</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Imperfect information</strong><br><span class="small">intelligibility 1.0/2</span></td><td>Audit, analyser and consequence cards</td><td>Reframes refusal from a hidden setting into a public, comparable fact.</td></tr>
+          <tr><td><strong>Cost asymmetry</strong><br><span class="small">refusal 0.6/2; 0 interactions to accept, 2&ndash;5 to refuse</span></td><td>One-step request generator, escalation ladder and alternatives</td><td>Removes navigation and knowledge as the binding constraint.</td></tr>
+          <tr><td><strong>No values-articulation mechanism</strong></td><td>Assemblies, community data agreements, council budget authority</td><td>Creates a legitimate channel for collective refusal, which individual consent cannot provide.</td></tr>
+          <tr><td><strong>Weak enforcement</strong></td><td>DPB-ready evidence, complaint escalation, public index</td><td>Supplies the regulator with the aggregate evidence it cannot generate itself.</td></tr>
+          <tr><td><strong>Distributive injustice</strong></td><td>Priority to Segment B; partner-delivered, multilingual, assisted modes</td><td>Improves effective freedom rather than formal rights (Sen).</td></tr>
+          <tr><td><strong>Short time horizon and AI training</strong></td><td>Advocacy for refusal-by-default and purpose limitation; objection campaigns</td><td>Shifts the default before the data is used, rather than compensating afterwards.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:18px">Bozeman&rsquo;s framework also gives us our public value success criteria: we should be able to show that we improved <strong>information</strong> (people understand the terms), <strong>articulation and aggregation</strong> (communities can express and combine preferences), <strong>distributive fairness</strong> (the least powerful gain the most), <strong>provider availability</strong> (there is a route other than exit), and <strong>value conflict management</strong> (refusal is treated as a right, not a trade-off). These are the criteria against which our evaluation measures us.</p>
+  </div>
+</section>
+
+<section id="risk">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">07</span><span class="t">Risk and constraint</span></div>
+    <h2>What could go wrong, and the tripwire that tells us it has.</h2>
+    <div class="table-wrap">
+      <table>
+        <caption>Risk register</caption>
+        <thead><tr><th scope="col">Risk</th><th scope="col">Likelihood</th><th scope="col">Impact</th><th scope="col">Mitigation</th><th scope="col">Early-warning indicator</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Elite capture</strong> &mdash; the agenda serves urban, English-speaking, already-privileged users.</td><td>High</td><td>High</td><td>Community Council with budget authority; Segment B priority; multilingual and assisted delivery; reach reported by segment, not total.</td><td>Users skew over 80% metro or English for two consecutive quarters.</td></tr>
+          <tr><td><strong>Vendor-driven agenda</strong> &mdash; a funder or technology partner shapes findings.</td><td>Medium</td><td>High</td><td>25% funder cap; no platform money; no pre-publication review clause; register of interests; published refused-funds list.</td><td>A draft report changes after a funder call.</td></tr>
+          <tr><td><strong>Technological exclusion</strong> &mdash; the tool itself becomes a barrier.</td><td>High</td><td>Medium</td><td>WhatsApp, USSD and voice modes; partner-assisted delivery; WCAG 2.2 AA; low-bandwidth build; print materials.</td><td>Share of assisted (non-self-serve) users falls below 30%.</td></tr>
+          <tr><td><strong>Privacy harm to our own users</strong> &mdash; a leak or misuse of disclosures people make to us.</td><td>Low</td><td>Very high</td><td>No free-text storage by default; client-side processing; annual security audit; DPIA; breach procedure; independent ethics review.</td><td>Any unencrypted store of user content; any third-party tracker on the site.</td></tr>
+          <tr><td><strong>Weak accountability</strong> &mdash; we publish and nothing changes.</td><td>Medium</td><td>High</td><td>Pair every finding with an escalation route and a named addressee; track adoption, not publication; independent evaluation of influence.</td><td>Two consecutive annual reports with no regulatory or platform response.</td></tr>
+          <tr><td><strong>Funder dependence</strong></td><td>High</td><td>High</td><td>Diversified mix; three-year commitments; six-month reserve; earned income capped at one-third; endowment by Year 5.</td><td>Any funder above 25%; reserve below three months.</td></tr>
+          <tr><td><strong>Platform dependence and retaliation</strong> &mdash; access withdrawn, legal notice, PR attack.</td><td>Medium</td><td>Medium</td><td>Public documentation and screenshots as evidence; manual methods; legal defence fund; right-of-reply policy; media partners.</td><td>Repeated bot-blocks or a legal notice; sudden interface redesign after publication.</td></tr>
+          <tr><td><strong>Legal risk</strong> &mdash; defamation, terms-of-service breach, DPDP non-compliance by us.</td><td>Medium</td><td>Medium</td><td>Pro bono counsel; pre-publication legal read; &ldquo;research, not compliance verdict&rdquo; framing; compliance to a higher standard than required.</td><td>Any claim stated as a legal conclusion without qualification.</td></tr>
+          <tr><td><strong>State pressure</strong> &mdash; FCRA scrutiny, &ldquo;anti-development&rdquo; framing, access denial.</td><td>Medium</td><td>High</td><td>Domestic funding base; domestic incorporation; non-partisan posture; engage the state as a data fiduciary too, not only as regulator; legal defence fund.</td><td>Any government letter questioning foreign funding or framing.</td></tr>
+          <tr><td><strong>Measurement invalidity</strong> &mdash; scores do not reflect real user experience.</td><td>Medium</td><td>High</td><td>Pre-registered rubric; two scorers with kappa of at least 0.7; user testing to triangulate; published raw evidence; no interval claims from ordinal scores.</td><td>Scorer disagreement above 30% on any dimension.</td></tr>
+          <tr><td><strong>Talent and burnout</strong> &mdash; scarce privacy lawyers and engineers; emotionally heavy work.</td><td>High</td><td>Medium</td><td>Fellowship pipeline with law and engineering schools; competitive pay within ratio; counselling budget; workload caps; documentation to reduce founder dependence.</td><td>Attrition above 25% in a year; single-person dependency on a key product.</td></tr>
+          <tr><td><strong>Mission drift through earned income</strong> &mdash; revenue shapes the research agenda.</td><td>Medium</td><td>High</td><td>Income cap; separate commercial entity if needed; publication firewall; board review of every contract above a threshold.</td><td>Any contract with an audited entity; agenda set by a client request.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:36px">Constraints we cannot remove</h3>
+    <ul class="clean">
+      <li><strong>Legal.</strong> We are a Data Fiduciary under the DPDP Act ourselves. FCRA limits foreign funding of political activity. Defamation and contract law constrain what we can publish. The consent-manager route requires Indian incorporation and a &#8377;2 crore net worth, which is capital we do not have in Year 1.</li>
+      <li><strong>Access.</strong> The object of study controls the interface. We can be blocked, rate-limited or redesigned around, and we cannot compel disclosure; only a statutory research-access provision would change that.</li>
+      <li><strong>Political.</strong> The state is simultaneously our potential funder, our regulator, the enforcer we petition, and the largest data fiduciary. That is a genuine conflict, and it means our independence must be visible, not asserted.</li>
+      <li><strong>Economic.</strong> We cannot build substitutes for essential platforms. Refusal without an alternative is a right people will not use, so our work is bounded by the availability of exit.</li>
+      <li><strong>Epistemic.</strong> Interface evidence is a moving target: A/B tests, personalisation and jurisdiction mean two users see different things. We manage this by dating every observation and refusing to generalise beyond it.</li>
+    </ul>
+
+    <h3 style="margin-top:30px">Failure modes we are watching for</h3>
+    <div class="grid-3">
+      <article class="card"><div class="num">The clinic</div><h3>Caseload, no change</h3><p>We process thousands of individual requests and no platform or rule changes.</p><p class="rule-out"><b>Response:</b> re-weight toward collective and policy work; publish a refusal index, not a caseload.</p></article>
+      <article class="card"><div class="num">The think tank</div><h3>Research, no reader</h3><p>We publish excellent research that no one with power reads.</p><p class="rule-out"><b>Response:</b> every output gets a named addressee, a deadline and an escalation route.</p></article>
+      <article class="card"><div class="num">The vendor</div><h3>Contracts, no mission</h3><p>Government or industry contracts become the main income and the agenda.</p><p class="rule-out"><b>Response:</b> income cap; board approval; publication firewall; refuse platform money.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="validation">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">08</span><span class="t">Validation</span></div>
+    <h2>Four claims, and the evidence each requires.</h2>
+    <p class="intro">For this CSO to be a feasible solution, four things must hold: there is demand, the approach is technically feasible, it is legally and institutionally permissible, and it is effective. We have primary evidence for the first and second, strong secondary evidence for the second and third, and a plan &mdash; not yet data &mdash; for the fourth. We state that plainly.</p>
+    <div class="table-wrap">
+      <table>
+        <caption>What needs to be true</caption>
+        <thead><tr><th scope="col">Claim</th><th scope="col">What must be true</th><th scope="col">Evidence status</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Demand</strong></td><td>People want to refuse and cannot.</td><td><strong>Primary:</strong> our audit of five platforms and 30 scored cells. User demand at scale is not yet tested.</td></tr>
+          <tr><td><strong>Technical feasibility</strong></td><td>We can build and run it.</td><td><strong>Primary:</strong> a live prototype, the audit instrument and the scoring data already exist.</td></tr>
+          <tr><td><strong>Legal and institutional permissibility</strong></td><td>We can operate and be heard.</td><td><strong>Secondary and legal:</strong> research, publication and advocacy are lawful; Section 8 can be incorporated; the DPDP framework creates a forum. The consent-manager route carries a capital condition.</td></tr>
+          <tr><td><strong>Effectiveness</strong></td><td>The intervention changes refusal behaviour and platform practice.</td><td><strong>Plan, not data:</strong> four pre-registered studies and an annual panel. We say so before the panel asks.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="evidence">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">09</span><span class="t">Primary evidence</span></div>
+    <h2>Our own measurement of the problem.</h2>
+    <p class="intro">The audit is our own primary data. It is the reason this organisation does not rest on assertion. Five widely used platforms were tested from an Indian network on 13 November 2026, in English, logged out, in a single browser session. Six dimensions were scored 0&ndash;2 on a published rubric. Evidence was recorded in three layers &mdash; direct interface observation, official documentation, and inference &mdash; with a confidence flag on every cell. Eight screenshots were retained. The full instrument is in Appendix B of the working document and the raw data is in the accompanying workbook.</p>
+    <div class="table-wrap">
+      <table>
+        <caption>Consent and Data Refusal Audit &mdash; scores out of 2</caption>
+        <thead><tr><th scope="col">Platform</th><th scope="col">Visibility</th><th scope="col">Refusal</th><th scope="col">Granularity</th><th scope="col">Withdrawal</th><th scope="col">Consequences</th><th scope="col">Intelligibility</th><th scope="col">Total</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Google Search</strong></td><td class="tnum">1</td><td class="tnum">1</td><td class="tnum">1</td><td class="tnum">2</td><td class="tnum">2</td><td class="tnum">1</td><td class="tnum"><strong>8 / 12</strong></td></tr>
+          <tr><td><strong>YouTube</strong></td><td class="tnum">1</td><td class="tnum">1</td><td class="tnum">2</td><td class="tnum">2</td><td class="tnum">1</td><td class="tnum">1</td><td class="tnum"><strong>8 / 12</strong></td></tr>
+          <tr><td><strong>Amazon India</strong></td><td class="tnum">1</td><td class="tnum">1</td><td class="tnum">1</td><td class="tnum">2</td><td class="tnum">2</td><td class="tnum">1</td><td class="tnum"><strong>8 / 12</strong></td></tr>
+          <tr><td><strong>LinkedIn</strong></td><td class="tnum">1</td><td class="tnum">0</td><td class="tnum">2</td><td class="tnum">1</td><td class="tnum">2</td><td class="tnum">1</td><td class="tnum"><strong>7 / 12</strong></td></tr>
+          <tr><td><strong>Reddit</strong></td><td class="tnum">1</td><td class="tnum">0</td><td class="tnum">1</td><td class="tnum">1</td><td class="tnum">2</td><td class="tnum">1</td><td class="tnum"><strong>6 / 12</strong></td></tr>
+          <tr><td><strong>Dimension mean</strong></td><td class="tnum"><strong>1.0</strong></td><td class="tnum"><strong>0.6</strong></td><td class="tnum"><strong>1.4</strong></td><td class="tnum"><strong>1.6</strong></td><td class="tnum"><strong>1.8</strong></td><td class="tnum"><strong>1.0</strong></td><td class="tnum"><strong>37 / 60</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-2" style="margin-top:30px">
+      <div>
+        <h3>What the audit establishes</h3>
+        <ul class="clean teal">
+          <li>The problem exists in the tested interfaces and is measurable with a repeatable instrument.</li>
+          <li>The failure is architectural, not attitudinal: platforms that document extensive controls still score 0 on refusal accessibility when those controls sit behind authentication.</li>
+          <li>The specific weak point is pre-collection refusal, not post-hoc withdrawal.</li>
+          <li>There is a policy&ndash;interface gap: documented controls were not reachable in the tested journey, and jurisdiction-specific rights disclosures are framed for the EU, UK and California while Indian users receive the interface without the commensurate disclosures. Reddit&rsquo;s policy contains no India or DPDP section at all.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>What the audit does not establish</h3>
+        <ul class="clean">
+          <li>It is not a compliance verdict.</li>
+          <li>It describes one logged-out session in one browser from one network on one date; interfaces are personalised and A/B tested, so a different user may see different defaults.</li>
+          <li>Account-level controls were recorded from documentation, not observed, and are marked medium confidence.</li>
+          <li>Scores are ordinal judgements, so means are descriptive and are not used for significance claims. The audit is an exploratory instrument, not a representative survey.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout"><p><strong>What we will not do:</strong> turn an exploratory audit into a compliance verdict, or a five-platform baseline into a claim about all Indian users. Every number on this page is dated and bounded.</p></div>
+  </div>
+</section>
+
+<section id="prototype">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">10</span><span class="t">Prototype evidence</span></div>
+    <h2>The approach has already been built, at low cost.</h2>
+    <p class="intro">A working prototype is live at <a href="https://datarefuse.onrender.com" target="_blank" rel="noopener">datarefuse.onrender.com</a>. It includes the policy analyser, the data-rights assistant (platform selection, request type, purpose, and a generated draft), the published audit with scores and dimension explanations, and a rights-explainer layer.</p>
+    <div class="grid-3">
+      <article class="card"><div class="num">Built</div><h3>Policy analyser</h3><p>Maps a clause to a purpose, a control and a DPDP provision, with citations rather than a summary.</p></article>
+      <article class="card"><div class="num">Built</div><h3>Data-rights assistant</h3><p>Turns a concern into a refuse, withdraw or delete request addressed to the right channel, with an escalation route.</p></article>
+      <article class="card"><div class="num">Built</div><h3>Published audit</h3><p>Scores, dimension explanations and a method that can be checked, disputed and repeated.</p></article>
+    </div>
+    <p style="margin-top:24px">This demonstrates technical feasibility and the marginal-cost argument directly: the public-good layer has been produced by a small team at hosting cost, without institutional backing, and it works without requiring users to create an account. It also demonstrates the limit: a prototype with no user testing, no translation and no partner distribution is a demonstration, not a service. That is what the funding would convert.</p>
+  </div>
+</section>
+
+<section id="precedent">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">11</span><span class="t">Secondary evidence</span></div>
+    <h2>Comparable approaches have worked, in adjacent domains.</h2>
+    <div class="table-wrap">
+      <table>
+        <caption>Precedent, not analogy</caption>
+        <thead><tr><th scope="col">Precedent</th><th scope="col">What it shows</th><th scope="col">Relevance to us</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ranking Digital Rights</strong><br><span class="small">2013&ndash;present; 20+ companies ranked on governance</span></td><td>A public, comparative, methodologically transparent ranking of corporate data practice became a reference point for investors, regulators and the EU&rsquo;s risk assessments.</td><td>Proves that a repeatable public index can create accountability pressure without regulatory power.</td></tr>
+          <tr><td><strong>Global Privacy Control + Sephora enforcement</strong><br><span class="small">CPPA, 2022, US$1.2m</span></td><td>A machine-readable refusal signal became legally enforceable, and a regulator acted on it.</td><td>Proves refusal can be made machine-readable and enforced; the model for an Indian refusal standard.</td></tr>
+          <tr><td><strong>Consumer Reports&rsquo; Permission Slip</strong></td><td>A consumer organisation operationalised data-deletion requests at scale, turning individual rights into aggregate pressure.</td><td>Proves the assistance model is feasible for a civil society organisation, not only a startup.</td></tr>
+          <tr><td><strong>Our Data Bodies</strong><br><span class="small">US; participatory data defence with marginalised communities</span></td><td>Community-based participatory research produced tools and language that communities used themselves.</td><td>Proves the collective method; informs our assembly and data-diary design.</td></tr>
+          <tr><td><strong>RBI Account Aggregator ecosystem</strong></td><td>Consent artefacts with purpose codes, revocation and audit trails operate at national scale in India.</td><td>Proves exercisable consent infrastructure is technically and institutionally possible in India &mdash; the design target for refusal.</td></tr>
+          <tr><td><strong>Informed refusal in bioethics</strong><br><span class="small">Benjamin 2016; IRB practice</span></td><td>Refusal was institutionalised as a justice claim: research ethics requires that people can refuse without penalty, and that refusal is recorded.</td><td>Proves refusal can be a governance requirement, not a preference &mdash; the precedent for refusal parity.</td></tr>
+          <tr><td><strong>Nouwens et al. (2020); Utz et al. (2019); Acquisti et al. (2017)</strong></td><td>Consent rates fall dramatically when refusing is made as easy as accepting; defaults and friction determine outcomes.</td><td>Proves the causal claim behind our intervention: interface architecture, not user attitude, drives refusal.</td></tr>
+          <tr><td><strong>EU Digital Services Act, Article 40</strong></td><td>Statutory researcher access to platform data, with safeguards, is now law in a major jurisdiction.</td><td>Provides the template for our research-access ask in India, and legitimises audit-based research.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="remaining">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">12</span><span class="t">What remains</span></div>
+    <h2>The honest gap, with a pre-registered plan to close it.</h2>
+    <p class="intro">We have primary evidence on the problem and on technical feasibility, and secondary evidence on effectiveness elsewhere. What we do not have is evidence that this intervention changes behaviour in India. These are the studies that would produce it.</p>
+    <div class="table-wrap">
+      <table>
+        <caption>Four studies, with success criteria</caption>
+        <thead><tr><th scope="col">Study</th><th scope="col">Design and sample</th><th scope="col">Success criterion</th><th scope="col">Timing</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. Usability and comprehension</strong></td><td>12 think-aloud sessions across three segments (4 urban, 4 partner-assisted, 4 low-literacy), two languages; task: understand a policy clause and refuse a permission.</td><td>At least 8 of 12 complete the refusal task unaided; no critical error in the generated draft.</td><td class="nowrap">Months 1&ndash;2</td></tr>
+          <tr><td><strong>2. Refusal conversion pilot</strong></td><td>300 users through partner organisations; measured funnel from visit to understand, draft, send, confirm and outcome; control group receives a static explainer only.</td><td>Intervention group sends at least twice as many valid requests; at least 30% report a successful outcome at 30 days.</td><td class="nowrap">Months 3&ndash;6</td></tr>
+          <tr><td><strong>3. Analyser accuracy</strong></td><td>100 clauses from 20 policies, two independent coders against a gold standard built by a lawyer; precision, recall and inter-coder agreement reported.</td><td>At least 85% agreement on purpose and control mapping; error rate published.</td><td class="nowrap">Months 2&ndash;4</td></tr>
+          <tr><td><strong>4. Stakeholder validation</strong></td><td>20 semi-structured interviews: 6 regulators or policymakers, 6 platform trust-and-safety or privacy staff, 8 community leaders.</td><td>At least 12 of 20 confirm the index would be usable in their work; documented demand for the instrument.</td><td class="nowrap">Months 1&ndash;4</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:20px">Beyond these, the decisive validation is longitudinal: does the Refusal Gap Index move, and does it move in response to us? That is answered by the annual panel and the contribution analysis, not by a one-off study.</p>
+    <div class="callout dark">
+      <p><strong>What would falsify the approach.</strong> If refusal scores do not vary across platforms, the instrument is insensitive. If assisted users do not convert to action, the assistance model is wrong. If platforms improve without any external pressure, our causal story is wrong. If the least-powerful segment gains no more than the most-powerful, the equity claim fails. We will pre-register these tests and publish the result, including a negative one.</p>
+    </div>
+  </div>
+</section>
+
+<section id="feasibility">
+  <div class="wrap">
+    <div class="sec-label"><span class="n">13</span><span class="t">Feasibility</span></div>
+    <h2>Legal, financial and operational.</h2>
+    <div class="grid-4">
+      <article class="card"><div class="num">Legal</div><h3>Lawful today</h3><p>Research, publication, advocacy and assistance are lawful. A Section 8 company can be incorporated immediately; 12A and 80G follow. No licence is needed to run the analyser or the assistant. The consent-manager route has a &#8377;2 crore net-worth condition and is therefore a Horizon-3 option, not a precondition.</p></article>
+      <article class="card"><div class="num">Financial</div><h3>Modest, comparable</h3><p>The prototype runs at hosting cost. The Year-1 core budget is &#8377;1.9 crore for a team of 8.8 FTE, modest relative to the value of the public good and comparable to similar Indian digital-rights organisations.</p></article>
+      <article class="card"><div class="num">Operational</div><h3>Built, not proposed</h3><p>The team has already produced the instrument, the scoring data and the prototype. Partner MOUs are the main outstanding operational dependency.</p></article>
+      <article class="card"><div class="num">Institutional</div><h3>A live window</h3><p>The DPDP framework creates a legitimate forum in the Board and MeitY consultation, and a live policy window: core obligations commence on 13 May 2027, so guidance written in 2026 will shape enforcement for years.</p></article>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top"><span class="mark" aria-hidden="true">DR</span><span><strong>DataRefuse</strong><small>Public-interest technology</small></span></a>
+        <p style="margin-top:16px">Data refusal, user consent and the right to opt out of AI. A Section 8 company in formation, working from New Delhi.</p>
+        <p><a href="https://datarefuse.onrender.com" target="_blank" rel="noopener">datarefuse.onrender.com</a></p>
+      </div>
+      <div>
+        <h4>This page</h4>
+        <ul>
+          <li><a href="#approach">Approach</a></li>
+          <li><a href="#environment">Environment</a></li>
+          <li><a href="#technology">Technology</a></li>
+          <li><a href="#governance">Governance</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Evidence</h4>
+        <ul>
+          <li><a href="#validation">Validation</a></li>
+          <li><a href="#evidence">Audit</a></li>
+          <li><a href="#remaining">What remains</a></li>
+          <li><a href="#feasibility">Feasibility</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>DataRefuse / 13 November 2026</span>
+      <span>Approach, evidence and validation</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
