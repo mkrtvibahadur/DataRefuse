@@ -1,33 +1,31 @@
 # DataRefuse
 
-A local Flask prototype for exploring app data practices and matching user concerns to relevant passages in official privacy-policy text.
+A Flask prototype that helps people examine app privacy information, search policy text for concerns, compare alternative tools and prepare data-rights request drafts.
 
-## Features
-- 16 apps across food & shopping, social & communication, travel & mobility, and entertainment & video.
-- App data-practice summaries and alternative services to investigate.
-- Policy Analyzer: choose an app, type a concern in everyday language (for example, "location tracking"), and DataRefuse retrieves the configured policy page where possible.
-- Query expansion for related wording (for example, location → GPS, geolocation, coordinates, device location).
-- Matching policy passages with matched terms and cautious plain-language explanations.
-- Data-rights request drafts and manual request tracking.
+## Run locally
+1. Install dependencies: `python3 -m pip install -r requirements.txt`
+2. Run: `python3 app.py`
+3. Open the local URL shown in the terminal (usually `http://127.0.0.1:5001`).
 
-## Run locally (Mac)
-```bash
-python3 -m pip install -r requirements.txt
-python3 app.py
-```
-Open http://127.0.0.1:5001
+## Deploy on Render
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn app:app`
+- Deploy the repository root containing `app.py`, `requirements.txt`, `templates/` and `static/`.
 
-If port 5001 is occupied, set another port:
-```bash
-PORT=5002 python3 app.py
-```
+## Current features
+- App directory and profiles across four categories.
+- Data categories to investigate and official policy links.
+- Policy Analyzer with policy retrieval, document extraction and rule-based keyword matching.
+- Manual ChatGPT handoff: copy a question and matching policy passages, then paste them into ChatGPT. This is not an integrated OpenAI API or chatbot.
+- Data Rights Assistant that drafts requests to refuse optional data use, withdraw consent or request deletion of eligible data. It does not submit requests.
+- Manual request tracker.
+- Location-permission checklist for iPhone and Android. The site does not scan the device or read live GPS permissions.
+- Alternative tools for comparison. They are not certified as data-free or less data-intensive.
 
-## Important limitations
-- The analyzer retrieves the official URL configured for each app. Some sites block automated access or load content dynamically; retrieval can be incomplete.
-- Matches are first-pass text matching, not a legal opinion and not proof of wrongdoing.
-- Plain-language explanations are cautious rule-based descriptions, not legal advice.
-- App data summaries and alternatives are starting points for research and must be checked against current official policies before being presented as verified findings.
-- Request drafts are not automatically submitted; the tracker is user-maintained.
+## Limitations
+Policy retrieval can fail when a site blocks automated access or renders content dynamically. Keyword matching can miss context or return irrelevant passages. Results are research leads, not legal advice, verified audits or proof of a violation. App profiles identify categories worth checking; they do not prove that every app collects every listed category. Tracker statuses are user-updated and not verified by platforms.
 
-## Alternative options
-Each app profile includes practical alternatives to investigate, including privacy-oriented apps, offline tools, direct ordering, public transport and locally controlled services. These are not certified as data-free; users should compare current policies and trade-offs.
+## Privacy and data
+The prototype uses SQLite for request-tracker records. Do not enter sensitive personal information. On a free Render instance, local files may not persist across service restarts or redeployments unless persistent storage is configured.
+
+See `DESIGN.md` for the visual design system.
