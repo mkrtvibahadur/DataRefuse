@@ -3,8 +3,8 @@
 {% block content %}
 <section class="page-head">
   <p class="eyebrow">POLICY & CONSENT REVIEW</p>
-  <h1>Check what an app says about your concern</h1>
-  <p>Select an app and describe the issue in your own words. DataRefuse searches the retrieved policy for related wording and shows the passages it finds.</p>
+  <h1>Find what the policy says about your concern</h1>
+  <p>Choose an app and name your concern. DataRefuse searches the retrieved policy text for related wording and displays matching passages.</p>
 </section>
 
 <form method="post" class="analyzer-form">
@@ -15,9 +15,9 @@
       {% for a in apps %}<option value="{{a.name}}" {% if app_name==a.name %}selected{% endif %}>{{a.name}} — {{a.category}}</option>{% endfor %}
     </select>
 
-    <label for="query">2. What do you want to check?</label>
+    <label for="query">2. What do you want to find?</label>
     <input id="query" name="query" type="text" value="{{query}}" placeholder="e.g. location tracking, data sharing, targeted ads..." required>
-    <p class="muted small">Use everyday language. You do not need to know the legal wording. DataRefuse searches for related terms and phrases.</p>
+    <p class="muted small">Describe the issue in everyday language. DataRefuse expands your query into related terms and searches the policy text.</p>
     <button class="btn" type="submit" name="action" value="analyse">Find relevant policy passages →</button>
 
     {% if source_url %}
@@ -38,8 +38,8 @@
 {% if hits is not none and hits %}
 <section class="results" id="analysis-results">
   <p class="eyebrow">ANALYSIS RESULTS</p>
-  <h2>Policy passages related to “{{query}}”</h2>
-  <p class="muted">These are potential matches, not proof of wrongdoing or a legal conclusion. Check the surrounding policy section for context.</p>
+  <h2>Policy passages matching “{{query}}”</h2>
+  <p class="muted">These matches point you to relevant wording. Read the surrounding section before drawing conclusions; keyword matches do not establish wrongdoing or a legal violation.</p>
   {% if source_url %}<p class="small">Source: <a class="text-link" href="{{source_url}}" target="_blank" rel="noopener">Open original policy ↗</a></p>{% endif %}
   {% for hit in hits %}
   <div class="result-group">
@@ -50,9 +50,9 @@
 
   <div class="panel ask-ai-panel">
     <p class="eyebrow">ASK A FOLLOW-UP QUESTION</p>
-    <h2>Want to understand these clauses better?</h2>
-    <p class="muted">Write a question in your own words. DataRefuse will prepare a prompt with the passages above so you can ask ChatGPT for a more detailed explanation.</p>
-    <label for="ai-question">Your question</label>
+    <h2>Ask a question about these passages.</h2>
+    <p class="muted">Write your question. DataRefuse packages it with the policy passages so you can ask ChatGPT to explain the wording.</p>
+    <label for="ai-question">Ask your question</label>
     <textarea id="ai-question" rows="3" placeholder="e.g. Does this mean my location can be shared with advertisers? Can I refuse this?"></textarea>
     <div class="ask-ai-actions">
       <button type="button" class="btn" id="copy-ai-prompt">Copy question + policy passages</button>
@@ -62,10 +62,10 @@
   </div>
 </section>
 {% elif hits is not none and query %}
-<section class="results"><h2>No relevant passage found</h2><p>The retrieved text did not contain a close match for “{{query}}”. This does not prove the policy is silent on the issue. The site may have returned incomplete text or used different wording.</p></section>
+<section class="results"><h2>No matching passage found</h2><p>The retrieved text contains no close match for “{{query}}”. This does not prove the policy is silent on the issue. The site can return incomplete text or use different wording.</p></section>
 {% endif %}
 
-<section class="notice"><strong>How this works</strong><p>DataRefuse retrieves the configured policy page where possible and searches its readable text for related wording. Some apps publish policies in dynamic pages or separate in-app notices, so results may be incomplete. The matching process is a first-pass review, not legal advice.</p></section>
+<section class="notice"><strong>How the analyzer works</strong><p>DataRefuse retrieves the configured policy page when the site allows access, extracts readable text and searches for related wording. Dynamic pages, blocked requests and separate in-app notices can leave gaps. Treat each match as a starting point for review, not legal advice.</p></section>
 
 {% if hits %}
 <script>
