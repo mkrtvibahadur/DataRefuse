@@ -10,22 +10,22 @@
 <section class="two-col">
   <div class="panel">
     <p class="eyebrow">DATA CATEGORIES TO CHECK</p>
-    <h2>What information may be involved?</h2>
-    <p class="muted">These are research prompts based on the app's service type. Confirm the exact practices in the current official policy.</p>
+    <h2>What data should you check?</h2>
+    <p class="muted">Use these categories to examine this app's data practices. Check the current official policy to verify each one.</p>
     <ul class="data-list">{% for item in a.collects %}<li><span>↗</span>{{item}}</li>{% endfor %}</ul>
     <a class="text-link" target="_blank" rel="noopener" href="{{a.policy}}">Open official policy / service page ↗</a>
   </div>
   <div class="panel">
     <p class="eyebrow">POLICY REVIEW</p>
-    <h2>Check a concern</h2>
-    <p>Search this app's policy for an issue in your own words, such as location tracking, data sharing or targeted advertising.</p>
+    <h2>Search a policy concern</h2>
+    <p>Search this app's policy for a concern you name—location tracking, data sharing or targeted advertising.</p>
     <a class="btn" href="/analyzer?app={{a.name|urlencode}}">Analyse {{a.name}} policy →</a>
   </div>
 </section>
 <section class="panel alternatives-section">
-  <p class="eyebrow">ALTERNATIVES TO CONSIDER</p>
-  <h2>Other ways to do the same thing</h2>
-  <p class="muted">These options may involve less platform-based tracking or give users more control. They are not certified as data-free. Compare their current policies, permissions, features and trade-offs before switching.</p>
+  <p class="eyebrow">ALTERNATIVE TOOLS</p>
+  <h2>Choose another way to do it</h2>
+  <p class="muted">These tools offer different ways to communicate, travel or access services. We do not certify them as data-free or less data-intensive. Compare their current policies, permissions, features and trade-offs before switching.</p>
   <div class="alternative-grid">
   {% for alt in alternatives %}
     <article class="alternative-card">
@@ -36,7 +36,7 @@
   </div>
 </section>
 <section class="notice">
-  <strong>How to interpret these alternatives</strong>
-  <p>“Privacy-oriented” does not mean “collects no data”. Open-source, decentralised, offline and direct-ordering options can change who controls the data and how much is shared, but the specific app, server or provider still matters.</p>
+  <strong>Check the trade-offs</strong>
+  <p>A privacy-focused label does not mean a tool collects no data. Open-source, decentralised, offline and direct-ordering options change how services handle information. Check the specific app, server or provider before you switch.</p>
 </section>
 {% endblock %}
