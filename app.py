@@ -389,5 +389,66 @@ def status(req_id):
     flash('Tracker updated. This status is self-reported, not verified by the platform.','success')
     return redirect(url_for('home'))
 
+@app.route('/consent-audit')
+def consent_audit():
+    platforms = [
+        {'name':'Google Search','scores':[1,1,1,2,2,1],'total':'8/12'},
+        {'name':'YouTube','scores':[1,1,2,2,1,1],'total':'8/12'},
+        {'name':'Amazon India','scores':[1,1,1,2,2,1],'total':'8/12'},
+        {'name':'LinkedIn','scores':[1,0,2,1,2,1],'total':'7/12'},
+        {'name':'Reddit','scores':[1,0,1,1,2,1],'total':'6/12'},
+    ]
+
+    dimensions = [
+        {'name':'Visibility of choice','mean':'1.0',
+         'question':'Can users easily find privacy choices?',
+         'why':'A right that is difficult to locate is difficult to exercise.',
+         'rubric':['No identifiable choice.','Choice exists but is buried.','Choice is clearly presented.'],
+         'observed':'All five scored 1.'},
+        {'name':'Refusal accessibility','mean':'0.6',
+         'question':'Is refusing optional data use as easy as accepting it?',
+         'why':'Tests consent asymmetry and interface friction.',
+         'rubric':['No identifiable refusal mechanism.','Refusal requires extra steps.','Refusal is as accessible as acceptance.'],
+         'observed':'Google, YouTube and Amazon scored 1; LinkedIn and Reddit scored 0.'},
+        {'name':'Granularity','mean':'1.4',
+         'question':'Can users refuse specific categories of data use?',
+         'why':'Tests whether consent is specific rather than blanket.',
+         'rubric':['Only all-or-nothing choice.','Some categories can be controlled.','Distinct purposes can be controlled.'],
+         'observed':'YouTube and LinkedIn scored 2; others scored 1.'},
+        {'name':'Withdrawal','mean':'1.6',
+         'question':'Can users reverse a previous choice?',
+         'why':'Consent should not be a one-way decision.',
+         'rubric':['No withdrawal mechanism.','Withdrawal is difficult to find.','Clear withdrawal mechanism.'],
+         'observed':'Google, YouTube and Amazon scored 2; LinkedIn and Reddit scored 1.'},
+        {'name':'Consequences of refusal','mean':'1.8',
+         'question':'Does refusal restrict access to the core service?',
+         'why':'Tests whether consent is genuinely voluntary.',
+         'rubric':['Refusal is blocked or inseparable from the service.','Consequences are unclear.','Core service remains available.'],
+         'observed':'Google, Amazon, LinkedIn and Reddit scored 2; YouTube scored 1.'},
+        {'name':'Intelligibility & accountability','mean':'1.0',
+         'question':'Does the platform explain data use and user rights?',
+         'why':'Users need understandable information to make informed decisions.',
+         'rubric':['Explanation is absent or vague.','Documentation is difficult to interpret.','Purpose and controls are clearly explained.'],
+         'observed':'All five scored 1.'}
+    ]
+
+    findings = [
+        {'title':'Consent is inferred from use',
+         'body':'No consent gate appeared on any of the five platforms during the logged-out India test.'},
+        {'title':'The refusal gap is a discovery gap',
+         'body':'Refusal often required navigating settings, while acceptance was the default.'},
+        {'title':'Some controls are inaccessible',
+         'body':'Some privacy controls required sign-in or appeared disabled.'},
+        {'title':'Policy and interface do not always match',
+         'body':'Controls described in documentation were not always visible in the tested interface.'}
+    ]
+
+    return render_template(
+        'consent_audit.html',
+        platforms=platforms,
+        dimensions=dimensions,
+        findings=findings
+    )
+
 if __name__=='__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT',5001)))
