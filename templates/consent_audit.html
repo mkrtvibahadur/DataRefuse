@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Consent and Data Refusal Audit — DataRefuse{% endblock %}
+{% block content %}
+<section class="page-intro audit-hero">
+  <p class="eyebrow">RESEARCH / CONSENT ARCHITECTURE / INDIA</p>
+  <h1>The Consent and<br><em>Data Refusal Audit.</em></h1>
+  <p class="lead">We examine whether digital platforms give people meaningful, accessible and reversible control over how their personal data is collected and used.</p>
+  <div class="audit-meta"><span>5 platforms</span><span>6 dimensions</span><span>Logged out · English</span><span>13 Nov 2026</span></div>
+</section>
+
+<section class="audit-callout">
+  <p class="eyebrow">THE CENTRAL PROPOSITION</p>
+  <h2>A privacy policy is not the same as a meaningful choice.</h2>
+  <p>A platform can publish privacy controls while making refusal difficult to find, fragmented across settings, poorly explained or costly to exercise. This audit examines the architecture of refusal — not simply whether a privacy policy exists.</p>
+</section>
+
+<section class="audit-section">
+  <div class="section-head"><div><p class="eyebrow">01 / PLATFORM SCORES</p><h2>How the five platforms compare</h2></div><span class="muted">Researcher-assigned scores · 0–2 per dimension</span></div>
+  <div class="table-wrap audit-table-wrap">
+    <table class="audit-table">
+      <thead><tr><th>Platform</th><th>Visibility</th><th>Refusal</th><th>Granularity</th><th>Withdrawal</th><th>Consequences</th><th>Clarity</th><th>Total</th></tr></thead>
+      <tbody>{% for p in platforms %}
+      <tr><td class="platform-name">{{p.name}}</td>{% for score in p.scores %}<td><span class="score score-{{score}}">{{score}}</span></td>{% endfor %}<td class="total-score">{{p.total}}</td></tr>
+      {% endfor %}</tbody>
+    </table>
+  </div>
+  <p class="audit-note">Score key: <span class="score score-0">0</span> absent or inaccessible · <span class="score score-1">1</span> partial or difficult to exercise · <span class="score score-2">2</span> clear and actionable. Scores describe the tested journey; they are not legal-compliance ratings.</p>
+</section>
+
+<section class="audit-section">
+  <div class="section-head"><div><p class="eyebrow">02 / DIMENSION AVERAGES</p><h2>Where the friction sits</h2></div><span class="muted">Mean score out of 2</span></div>
+  <div class="mean-list">
+  {% for d in dimensions %}
+    <div class="mean-row"><span>{{d.name}}</span><div class="mean-track"><i style="width:{{ (d.mean|float / 2 * 100)|round }}%"></i></div><b>{{d.mean}}</b></div>
+  {% endfor %}
+  </div>
+  <div class="audit-callout compact"><p class="eyebrow">KEY FINDING</p><h2>Reversibility outranks refusal.</h2><p>Platforms score better on letting users change a choice inside an account than on letting them refuse optional data use before or at the point of collection. Refusal accessibility has the lowest mean score: <strong>0.6 out of 2</strong>.</p></div>
+</section>
+
+<section class="audit-section">
+  <div class="section-head"><div><p class="eyebrow">03 / WHAT THE SCORES REVEAL</p><h2>Four patterns of friction</h2></div></div>
+  <div class="finding-grid">{% for f in findings %}
+    <article class="finding"><p class="eyebrow">0{{loop.index}} / OBSERVATION</p><h3>{{f.title}}</h3><p>{{f.body}}</p></article>
+  {% endfor %}</div>
+</section>
+
+<section class="audit-section">
+  <div class="section-head"><div><p class="eyebrow">04 / THE AUDIT INSTRUMENT</p><h2>Six dimensions. One question: can people exercise choice?</h2></div></div>
+  <div class="dimension-grid">{% for d in dimensions %}
+    <article class="dimension-card"><div class="dimension-top"><span class="mean-chip">{{d.mean}} / 2</span><h3>{{loop.index}}. {{d.name}}</h3></div><p class="dimension-question">{{d.question}}</p><p class="dimension-why">{{d.why}}</p><div class="rubric"><p><b>0</b> {{d.rubric[0]}}</p><p><b>1</b> {{d.rubric[1]}}</p><p><b>2</b> {{d.rubric[2]}}</p></div><p class="dimension-observed"><strong>Observed:</strong> {{d.observed}}</p></article>
+  {% endfor %}</div>
+</section>
+
+<section class="audit-method">
+  <p class="eyebrow">METHOD & LIMITATIONS</p>
+  <h2>A focused interface audit, not a compliance verdict.</h2>
+  <p>One logged-out session, India (Delhi egress), English, one Chrome-family browser, 13 November 2026. Interfaces can vary by account, location, device and A/B testing. Account-level controls were not tested; information from official documentation is distinguished from controls directly observed in the interface. Scores are exploratory researcher judgements about refusal architecture, not measurements of legal compliance. Where possible, refusal actions were performed and re-verified.</p>
+  <p class="audit-sources"><strong>Conceptual frame:</strong> privacy self-management (Solove, 2013); contextual integrity (Nissenbaum, 2004); choice architecture (Thaler & Sunstein, 2008); consent and dark patterns (Utz et al., 2019; Nouwens et al., 2020); DPDP Act 2023, sections 6 and 11–13.</p>
+</section>
+{% endblock %}
